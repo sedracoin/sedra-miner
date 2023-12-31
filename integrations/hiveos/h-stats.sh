@@ -1,7 +1,6 @@
 ####################################################################################
 ###
-### kaspa-miner
-### https://github.com/tmrlvi/kaspa-miner/releases
+### sedra-miner
 ###
 ### Hive integration: Merlin
 ###
@@ -13,7 +12,7 @@
 # MAIN script body
 #######################
 
-. /hive/miners/custom/kaspa-miner/h-manifest.conf
+. /hive/miners/custom/sedra-miner/h-manifest.conf
 stats_raw=`cat $CUSTOM_LOG_BASENAME.log | grep -w "hashrate" | tail -n 1 `
 #echo $stats_raw
 

@@ -1,7 +1,6 @@
 ####################################################################################
 ###
-### kaspa-miner
-### https://github.com/tmrlvi/kaspa-miner/releases
+### sedra-miner
 ###
 ### Hive integration: Merlin
 ###

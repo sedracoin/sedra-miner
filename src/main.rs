@@ -6,7 +6,7 @@ use std::error::Error as StdError;
 use std::ffi::OsStr;
 
 use clap::{App, FromArgMatches, IntoApp};
-use kaspa_miner::PluginManager;
+use sedra_miner::PluginManager;
 use log::{error, info};
 use rand::{thread_rng, RngCore};
 use std::fs;
@@ -16,7 +16,7 @@ use std::thread::sleep;
 use std::time::Duration;
 
 use crate::cli::Opt;
-use crate::client::grpc::KaspadHandler;
+use crate::client::grpc::SedradHandler;
 use crate::client::stratum::StratumHandler;
 use crate::client::Client;
 use crate::miner::MinerManager;
@@ -24,13 +24,13 @@ use crate::target::Uint256;
 
 mod cli;
 mod client;
-mod kaspad_messages;
+mod sedrad_messages;
 mod miner;
 mod pow;
 mod target;
 mod watch;
 
-const WHITELIST: [&str; 4] = ["libkaspacuda", "libkaspaopencl", "kaspacuda", "kaspaopencl"];
+const WHITELIST: [&str; 4] = ["libsedracuda", "libsedraopencl", "sedracuda", "sedraopencl"];
 
 pub mod proto {
     #![allow(clippy::derive_partial_eq_without_eq)]
@@ -69,13 +69,13 @@ fn filter_plugins(dirname: &str) -> Vec<String> {
 }
 
 async fn get_client(
-    kaspad_address: String,
+    sedrad_address: String,
     mining_address: String,
     mine_when_not_synced: bool,
     block_template_ctr: Arc<AtomicU16>,
 ) -> Result<Box<dyn Client + 'static>, Error> {
-    if kaspad_address.starts_with("stratum+tcp://") {
-        let (_schema, address) = kaspad_address.split_once("://").unwrap();
+    if sedrad_address.starts_with("stratum+tcp://") {
+        let (_schema, address) = sedrad_address.split_once("://").unwrap();
         Ok(StratumHandler::connect(
             address.to_string().clone(),
             mining_address.clone(),
@@ -83,9 +83,9 @@ async fn get_client(
             Some(block_template_ctr.clone()),
         )
         .await?)
-    } else if kaspad_address.starts_with("grpc://") {
-        Ok(KaspadHandler::connect(
-            kaspad_address.clone(),
+    } else if sedrad_address.starts_with("grpc://") {
+        Ok(SedradHandler::connect(
+            sedrad_address.clone(),
             mining_address.clone(),
             mine_when_not_synced,
             Some(block_template_ctr.clone()),
@@ -102,7 +102,7 @@ async fn client_main(
     plugin_manager: &PluginManager,
 ) -> Result<(), Error> {
     let mut client = get_client(
-        opt.kaspad_address.clone(),
+        opt.sedrad_address.clone(),
         opt.mining_address.clone(),
         opt.mine_when_not_synced,
         block_template_ctr.clone(),
@@ -128,7 +128,7 @@ async fn main() -> Result<(), Error> {
     let mut path = current_exe().unwrap_or_default();
     path.pop(); // Getting the parent directory
     let plugins = filter_plugins(path.to_str().unwrap_or("."));
-    let (app, mut plugin_manager): (App, PluginManager) = kaspa_miner::load_plugins(Opt::into_app(), &plugins)?;
+    let (app, mut plugin_manager): (App, PluginManager) = sedra_miner::load_plugins(Opt::into_app(), &plugins)?;
 
     let matches = app.get_matches();
 
@@ -137,7 +137,7 @@ async fn main() -> Result<(), Error> {
     opt.process()?;
     env_logger::builder().filter_level(opt.log_level()).parse_default_env().init();
     info!("=================================================================================");
-    info!("                 Kaspa-Miner GPU {}", env!("CARGO_PKG_VERSION"));
+    info!("                 Sedra-Miner GPU {}", env!("CARGO_PKG_VERSION"));
     info!(" Mining for: {}", opt.mining_address);
     info!("=================================================================================");
     info!("Found plugins: {:?}", plugins);

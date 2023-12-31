@@ -4,8 +4,8 @@ use cust::device::DeviceAttribute;
 use cust::function::Function;
 use cust::module::{ModuleJitOption, OptLevel};
 use cust::prelude::*;
-use kaspa_miner::xoshiro256starstar::Xoshiro256StarStar;
-use kaspa_miner::Worker;
+use sedra_miner::xoshiro256starstar::Xoshiro256StarStar;
+use sedra_miner::Worker;
 use log::{error, info};
 use rand::{Fill, RngCore};
 use std::ffi::CString;
@@ -13,11 +13,11 @@ use std::sync::{Arc, Weak};
 
 static BPS: f32 = 1.;
 
-static PTX_86: &str = include_str!("../resources/kaspa-cuda-sm86.ptx");
-static PTX_75: &str = include_str!("../resources/kaspa-cuda-sm75.ptx");
-static PTX_61: &str = include_str!("../resources/kaspa-cuda-sm61.ptx");
-static PTX_30: &str = include_str!("../resources/kaspa-cuda-sm30.ptx");
-static PTX_20: &str = include_str!("../resources/kaspa-cuda-sm20.ptx");
+static PTX_86: &str = include_str!("../resources/sedra-cuda-sm86.ptx");
+static PTX_75: &str = include_str!("../resources/sedra-cuda-sm75.ptx");
+static PTX_61: &str = include_str!("../resources/sedra-cuda-sm61.ptx");
+static PTX_30: &str = include_str!("../resources/sedra-cuda-sm30.ptx");
+static PTX_20: &str = include_str!("../resources/sedra-cuda-sm20.ptx");
 
 pub struct Kernel<'kernel> {
     func: Arc<Function<'kernel>>,

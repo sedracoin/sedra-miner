@@ -1,5 +1,5 @@
 use crate::proto::{
-    kaspad_message::Payload, GetBlockTemplateRequestMessage, GetInfoRequestMessage, KaspadMessage,
+    sedrad_message::Payload, GetBlockTemplateRequestMessage, GetInfoRequestMessage, SedradMessage,
     NotifyBlockAddedRequestMessage, NotifyNewBlockTemplateRequestMessage, RpcBlock, SubmitBlockRequestMessage,
 };
 use crate::{
@@ -7,19 +7,19 @@ use crate::{
     Hash,
 };
 
-impl KaspadMessage {
+impl SedradMessage {
     #[inline(always)]
     pub fn get_info_request() -> Self {
-        KaspadMessage { payload: Some(Payload::GetInfoRequest(GetInfoRequestMessage {})) }
+        SedradMessage { payload: Some(Payload::GetInfoRequest(GetInfoRequestMessage {})) }
     }
     #[inline(always)]
     pub fn notify_block_added() -> Self {
-        KaspadMessage { payload: Some(Payload::NotifyBlockAddedRequest(NotifyBlockAddedRequestMessage {})) }
+        SedradMessage { payload: Some(Payload::NotifyBlockAddedRequest(NotifyBlockAddedRequestMessage {})) }
     }
 
     #[inline(always)]
     pub fn submit_block(block: RpcBlock) -> Self {
-        KaspadMessage {
+        SedradMessage {
             payload: Some(Payload::SubmitBlockRequest(SubmitBlockRequestMessage {
                 block: Some(block),
                 allow_non_daa_blocks: false,
@@ -28,26 +28,26 @@ impl KaspadMessage {
     }
 }
 
-impl From<GetInfoRequestMessage> for KaspadMessage {
+impl From<GetInfoRequestMessage> for SedradMessage {
     fn from(a: GetInfoRequestMessage) -> Self {
-        KaspadMessage { payload: Some(Payload::GetInfoRequest(a)) }
+        SedradMessage { payload: Some(Payload::GetInfoRequest(a)) }
     }
 }
-impl From<NotifyBlockAddedRequestMessage> for KaspadMessage {
+impl From<NotifyBlockAddedRequestMessage> for SedradMessage {
     fn from(a: NotifyBlockAddedRequestMessage) -> Self {
-        KaspadMessage { payload: Some(Payload::NotifyBlockAddedRequest(a)) }
+        SedradMessage { payload: Some(Payload::NotifyBlockAddedRequest(a)) }
     }
 }
 
-impl From<GetBlockTemplateRequestMessage> for KaspadMessage {
+impl From<GetBlockTemplateRequestMessage> for SedradMessage {
     fn from(a: GetBlockTemplateRequestMessage) -> Self {
-        KaspadMessage { payload: Some(Payload::GetBlockTemplateRequest(a)) }
+        SedradMessage { payload: Some(Payload::GetBlockTemplateRequest(a)) }
     }
 }
 
-impl From<NotifyNewBlockTemplateRequestMessage> for KaspadMessage {
+impl From<NotifyNewBlockTemplateRequestMessage> for SedradMessage {
     fn from(a: NotifyNewBlockTemplateRequestMessage) -> Self {
-        KaspadMessage { payload: Some(Payload::NotifyNewBlockTemplateRequest(a)) }
+        SedradMessage { payload: Some(Payload::NotifyNewBlockTemplateRequest(a)) }
     }
 }
 

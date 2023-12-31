@@ -1,10 +1,10 @@
 use crate::client::Client;
 use crate::pow::BlockSeed;
 use crate::pow::BlockSeed::{FullBlock, PartialBlock};
-use crate::proto::kaspad_message::Payload;
+use crate::proto::sedrad_message::Payload;
 use crate::proto::rpc_client::RpcClient;
 use crate::proto::{
-    GetBlockTemplateRequestMessage, GetInfoRequestMessage, KaspadMessage, NotifyBlockAddedRequestMessage,
+    GetBlockTemplateRequestMessage, GetInfoRequestMessage, SedradMessage, NotifyBlockAddedRequestMessage,
     NotifyNewBlockTemplateRequestMessage,
 };
 use crate::{miner::MinerManager, Error};
@@ -23,13 +23,13 @@ use tonic::{transport::Channel as TonicChannel, Streaming};
 
 static EXTRA_DATA: &str = concat!(env!("CARGO_PKG_VERSION"), "/", env!("PACKAGE_COMPILE_TIME"));
 static VERSION_UPDATE: &str = "0.11.15";
-type BlockHandle = JoinHandle<Result<(), PollSendError<KaspadMessage>>>;
+type BlockHandle = JoinHandle<Result<(), PollSendError<SedradMessage>>>;
 
 #[allow(dead_code)]
-pub struct KaspadHandler {
+pub struct SedradHandler {
     client: RpcClient<TonicChannel>,
-    pub send_channel: Sender<KaspadMessage>,
-    stream: Streaming<KaspadMessage>,
+    pub send_channel: Sender<SedradMessage>,
+    stream: Streaming<SedradMessage>,
     miner_address: String,
     mine_when_not_synced: bool,
     devfund_address: Option<String>,
@@ -41,7 +41,7 @@ pub struct KaspadHandler {
 }
 
 #[async_trait(?Send)]
-impl Client for KaspadHandler {
+impl Client for SedradHandler {
     fn add_devfund(&mut self, address: String, percent: u16) {
         self.devfund_address = Some(address);
         self.devfund_percent = percent;
@@ -56,7 +56,7 @@ impl Client for KaspadHandler {
         while let Some(msg) = self.stream.message().await? {
             match msg.payload {
                 Some(payload) => self.handle_message(payload, miner).await?,
-                None => warn!("kaspad message payload is empty"),
+                None => warn!("sedrad message payload is empty"),
             }
         }
         Ok(())
@@ -67,7 +67,7 @@ impl Client for KaspadHandler {
     }
 }
 
-impl KaspadHandler {
+impl SedradHandler {
     pub async fn connect<D>(
         address: D,
         miner_address: String,
@@ -98,15 +98,15 @@ impl KaspadHandler {
         }))
     }
 
-    fn create_block_channel(send_channel: Sender<KaspadMessage>) -> (Sender<BlockSeed>, BlockHandle) {
-        // KaspadMessage::submit_block(block)
+    fn create_block_channel(send_channel: Sender<SedradMessage>) -> (Sender<BlockSeed>, BlockHandle) {
+        // SedradMessage::submit_block(block)
         let (send, recv) = mpsc::channel::<BlockSeed>(1);
         (
             send,
             tokio::spawn(async move {
                 ReceiverStream::new(recv)
                     .map(|block_seed| match block_seed {
-                        FullBlock(block) => KaspadMessage::submit_block(*block),
+                        FullBlock(block) => SedradMessage::submit_block(*block),
                         PartialBlock { .. } => unreachable!("All blocks sent here should have arrived from here"),
                     })
                     .map(Ok)
@@ -116,11 +116,11 @@ impl KaspadHandler {
         )
     }
 
-    async fn client_send(&self, msg: impl Into<KaspadMessage>) -> Result<(), SendError<KaspadMessage>> {
+    async fn client_send(&self, msg: impl Into<SedradMessage>) -> Result<(), SendError<SedradMessage>> {
         self.send_channel.send(msg.into()).await
     }
 
-    async fn client_get_block_template(&mut self) -> Result<(), SendError<KaspadMessage>> {
+    async fn client_get_block_template(&mut self) -> Result<(), SendError<SedradMessage>> {
         let pay_address = match &self.devfund_address {
             Some(devfund_address) if self.block_template_ctr.load(Ordering::SeqCst) <= self.devfund_percent => {
                 devfund_address.clone()
@@ -158,10 +158,10 @@ impl KaspadHandler {
                 }
             }
             Payload::GetInfoResponse(info) => {
-                info!("Kaspad version: {}", info.server_version);
-                let kaspad_version = Version::parse(&info.server_version)?;
+                info!("Sedrad version: {}", info.server_version);
+                let sedrad_version = Version::parse(&info.server_version)?;
                 let update_version = Version::parse(VERSION_UPDATE)?;
-                match kaspad_version >= update_version {
+                match sedrad_version >= update_version {
                     true => self.client_send(NotifyNewBlockTemplateRequestMessage {}).await?,
                     false => self.client_send(NotifyBlockAddedRequestMessage {}).await?,
                 };
@@ -173,7 +173,7 @@ impl KaspadHandler {
                 Some(e) => error!("Failed registering for new template notifications: {:?}", e),
             },
             Payload::NotifyBlockAddedResponse(res) => match res.error {
-                None => info!("Registered for block notifications (upgrade your Kaspad for better experience)"),
+                None => info!("Registered for block notifications (upgrade your Sedrad for better experience)"),
                 Some(e) => error!("Failed registering for block notifications: {:?}", e),
             },
             msg => info!("got unknown msg: {:?}", msg),
@@ -182,7 +182,7 @@ impl KaspadHandler {
     }
 }
 
-impl Drop for KaspadHandler {
+impl Drop for SedradHandler {
     fn drop(&mut self) {
         self.block_handle.abort();
     }

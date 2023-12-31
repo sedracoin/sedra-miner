@@ -1,7 +1,6 @@
 ####################################################################################
 ###
-### kaspa-miner
-### https://github.com/tmrlvi/kaspa-miner/releases
+### sedra-miner
 ###
 ### Hive integration: Merlin
 ###
@@ -15,15 +14,14 @@ fi
 cat > h-manifest.conf << EOF
 ####################################################################################
 ###
-### kaspa-miner
-### https://github.com/tmrlvi/kaspa-miner/releases
+### sedra-miner
 ###
 ### Hive integration: Merlin
 ###
 ####################################################################################
 
 # The name of the miner
-CUSTOM_NAME=kaspa-miner
+CUSTOM_NAME=sedra-miner
 
 # Optional version of your custom miner package
 CUSTOM_VERSION=$1

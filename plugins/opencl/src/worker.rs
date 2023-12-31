@@ -1,8 +1,8 @@
 use crate::cli::NonceGenEnum;
 use crate::Error;
 use include_dir::{include_dir, Dir};
-use kaspa_miner::xoshiro256starstar::Xoshiro256StarStar;
-use kaspa_miner::Worker;
+use sedra_miner::xoshiro256starstar::Xoshiro256StarStar;
+use sedra_miner::Worker;
 use log::{info, warn};
 use opencl3::command_queue::{CommandQueue, CL_QUEUE_OUT_OF_ORDER_EXEC_MODE_ENABLE};
 use opencl3::context::Context;
@@ -20,7 +20,7 @@ use std::ptr;
 use std::sync::Arc;
 
 static BINARY_DIR: Dir = include_dir!("./plugins/opencl/resources/bin/");
-static PROGRAM_SOURCE: &str = include_str!("../resources/kaspa-opencl.cl");
+static PROGRAM_SOURCE: &str = include_str!("../resources/sedra-opencl.cl");
 
 pub struct OpenCLGPUWorker {
     context: Arc<Context>,
@@ -206,10 +206,10 @@ impl OpenCLGPUWorker {
                     device_name = device_name.split_once(':').expect("We checked for `:`").0.to_string();
                 }
                 info!("{}: Looking for binary for {}", name, device_name);
-                match BINARY_DIR.get_file(format!("{}_kaspa-opencl.bin", device_name)) {
+                match BINARY_DIR.get_file(format!("{}_sedra-opencl.bin", device_name)) {
                     Some(binary) => {
                         Program::create_and_build_from_binary(&context, &[binary.contents()], "").unwrap_or_else(|e|{
-                        //Program::create_and_build_from_binary(&context, &[include_bytes!("../resources/kaspa-opencl-linked.bc")], "").unwrap_or_else(|e|{
+                        //Program::create_and_build_from_binary(&context, &[include_bytes!("../resources/sedra-opencl-linked.bc")], "").unwrap_or_else(|e|{
                             warn!("{}::Program::create_and_build_from_source failed: {}. Reverting to compiling from source", name, e);
                             use_binary = false;
                             from_source(&context, &device, options).unwrap_or_else(|e| panic!("{}::Program::create_and_build_from_binary failed: {}", name, e))

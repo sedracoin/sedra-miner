@@ -1,17 +1,16 @@
 ####################################################################################
 ###
-### kaspa-miner
-### https://github.com/tmrlvi/kaspa-miner/releases
+### sedra-miner
 ###
 ### Hive integration: Merlin
 ###
 ####################################################################################
 
 #!/usr/bin/env bash
-[[ -e /hive/custom ]] && . /hive/custom/kaspa-miner/h-manifest.conf
-[[ -e /hive/miners/custom ]] && . /hive/miners/custom/kaspa-miner/h-manifest.conf
+[[ -e /hive/custom ]] && . /hive/custom/sedra-miner/h-manifest.conf
+[[ -e /hive/miners/custom ]] && . /hive/miners/custom/sedra-miner/h-manifest.conf
 conf=""
-conf+=" --kaspad-address=$CUSTOM_URL --mining-address $CUSTOM_TEMPLATE"
+conf+=" --sedrad-address=$CUSTOM_URL --mining-address $CUSTOM_TEMPLATE"
 
 
 [[ ! -z $CUSTOM_USER_CONFIG ]] && conf+=" $CUSTOM_USER_CONFIG"

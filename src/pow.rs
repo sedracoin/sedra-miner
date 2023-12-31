@@ -13,7 +13,7 @@ use crate::{
     target::{self, Uint256},
     Error, Hash,
 };
-use kaspa_miner::Worker;
+use sedra_miner::Worker;
 
 mod hasher;
 mod heavy_hash;

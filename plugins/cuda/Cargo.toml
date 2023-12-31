@@ -1,12 +1,12 @@
 [package]
-name = "kaspacuda"
+name = "sedracuda"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-kaspa-miner = {path = "../../"}
+sedra-miner = {path = "../../"}
 cust ="0.3"
 log = "0.4"
 rand = "0.8"
