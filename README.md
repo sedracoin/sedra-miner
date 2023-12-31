@@ -98,6 +98,5 @@ Due to community decision, the minimum amount in the precompiled binaries is 2%*
 
 # Donation Addresses
 
-**Elichai**: `sedra:qzvqtx5gkvl3tc54up6r8pk5mhuft9rtr0lvn624w9mtv4eqm9rvc9zfdmmpu`
+sedra:qzm84ps5ry5yv7hthz4xsyjc3622amhphewtl4zrc395xxcaw05hshc79n7rz
 
-**HauntedCook**: `sedra:qz4jdyu04hv4hpyy00pl6trzw4gllnhnwy62xattejv2vaj5r0p5quvns058f`
