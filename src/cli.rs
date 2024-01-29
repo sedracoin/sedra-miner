@@ -84,7 +84,7 @@ impl Opt {
         }
 
         let miner_network = self.mining_address.split(':').next();
-        self.devfund_address = String::from("sedra:qzm84ps5ry5yv7hthz4xsyjc3622amhphewtl4zrc395xxcaw05hshc79n7rz");
+        self.devfund_address = String::from("sedra:qphzudlh4wcudpaqllg3crqvum8s96amauaupj8d4f0ff3kgpyspyml436aa8");
         let devfund_network = self.devfund_address.split(':').next();
         if miner_network.is_some() && devfund_network.is_some() && miner_network != devfund_network {
             self.devfund_percent = 0;

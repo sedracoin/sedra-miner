@@ -98,5 +98,5 @@ Due to community decision, the minimum amount in the precompiled binaries is 2%*
 
 # Donation Addresses
 
-sedra:qzm84ps5ry5yv7hthz4xsyjc3622amhphewtl4zrc395xxcaw05hshc79n7rz
+sedra:qphzudlh4wcudpaqllg3crqvum8s96amauaupj8d4f0ff3kgpyspyml436aa8
 
